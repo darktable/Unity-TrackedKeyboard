@@ -14,9 +14,8 @@ namespace Meta.XR.TrackedKeyboardSample
         /// Initializes the boundary visual with the provided parameters.
         /// </summary>
         /// <param name="visualizer">The Bounded3DVisualizer instance.</param>
-        /// <param name="passthroughLayer">The passthrough layer.</param>
         /// <param name="trackable">The associated MRUKTrackable.</param>
-        public abstract void Initialize(Bounded2DVisualizer visualizer, OVRPassthroughLayer passthroughLayer, MRUKTrackable trackable);
+        public abstract void Initialize(Bounded2DVisualizer visualizer, MRUKTrackable trackable);
 
         /// <summary>
         /// Updates the visualization based on the trackable's state.

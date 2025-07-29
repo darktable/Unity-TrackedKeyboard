@@ -23,13 +23,7 @@ namespace Meta.XR.TrackedKeyboardSample
         [SerializeField, Tooltip("Reference to the right hand GameObject.")]
         private GameObject _rightHand;
 
-        [SerializeField, Tooltip("Passthrough layer for underlay.")]
-        private OVRPassthroughLayer _passthroughUnderlay;
-
-        [SerializeField, Tooltip("Passthrough layer for overlay.")]
-        private OVRPassthroughLayer _passthroughOverlay;
-
-        [Tooltip("Objects that shouldn't be rendered during passthrough")]
+        [Tooltip("Objects that shouldn't be rendered during full passthrough")]
         [SerializeField] private GameObject[] _objects;
 
         [SerializeField, Tooltip("Boundary visualizer implementation.")]
@@ -111,7 +105,7 @@ namespace Meta.XR.TrackedKeyboardSample
             if (_boundaryVisualizer != null)
             {
                 // Initialize with the selected BoundaryVisual implementation
-                _boundaryVisualizer.Initialize(_passthroughOverlay, trackable, _boundaryVisualImplementation);
+                _boundaryVisualizer.Initialize(trackable, _boundaryVisualImplementation);
                 ToggleBoundaryVisual(_passiveVisualToggle.isOn);
             }
             else
@@ -128,7 +122,6 @@ namespace Meta.XR.TrackedKeyboardSample
                 _handDetector.RightRayInteractor = _rightRayInteractor;
                 _handDetector.LeftHandPropertyBlock = _leftHandMaterialEditor;
                 _handDetector.RightHandPropertyBlock = _rightHandMaterialEditor;
-                _handDetector.PassthroughOverlay = _passthroughOverlay;
             }
             else
             {
@@ -188,12 +181,6 @@ namespace Meta.XR.TrackedKeyboardSample
         public void ToggleMrMode()
         {
             _isMRMode = !_isMRMode;
-
-            if (_passthroughOverlay != null)
-                _passthroughOverlay.gameObject.SetActive(!_isMRMode);
-
-            if (_passthroughUnderlay != null)
-                _passthroughUnderlay.gameObject.SetActive(_isMRMode);
 
             if (_boundaryVisualizer != null)
                 _boundaryVisualizer.SetUserEnabled(!_isMRMode);

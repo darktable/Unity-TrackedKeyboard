@@ -15,7 +15,7 @@ namespace Meta.XR.TrackedKeyboardSample
         private GameObject _visualInstance;
         private Material _material;
 
-        public override void Initialize(Bounded2DVisualizer visualizer, OVRPassthroughLayer passthroughLayer, MRUKTrackable trackable)
+        public override void Initialize(Bounded2DVisualizer visualizer, MRUKTrackable trackable)
         {
             if (_quadPrefab == null)
             {

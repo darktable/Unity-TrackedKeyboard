@@ -1,8 +1,8 @@
 // (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
+using Meta.XR.MRUtilityKit;
 using System;
 using System.Collections.Generic;
-using Meta.XR.MRUtilityKit;
 using UnityEngine;
 
 namespace Meta.XR.TrackedKeyboardSample
@@ -37,12 +37,10 @@ namespace Meta.XR.TrackedKeyboardSample
         public BoxCollider BoxCollider => _boxCollider;
 
         private MRUKTrackable _trackable;
-        private OVRPassthroughLayer _passthroughLayer;
         private readonly HashSet<string> _logOnce = new HashSet<string>();
         private bool _isBoundaryVisualEnabled = true;
         private bool _isHoverActive = false;
         private BoxCollider _boxCollider;
-
         /// <summary>
         /// Logs a message only once.
         /// </summary>
@@ -57,13 +55,10 @@ namespace Meta.XR.TrackedKeyboardSample
 
         private void Update()
         {
-            if (_passthroughLayer)
+            if (_boxTransform)
             {
-                if (_boxTransform)
-                {
-                    // Only draw the box when using surface projected passthrough
-                    _boxTransform.gameObject.SetActive(_passthroughLayer.isActiveAndEnabled);
-                }
+                // Only draw the box when not using full passthrough
+                _boxTransform.gameObject.SetActive(_isBoundaryVisualEnabled);
             }
 
             // Update the visual if necessary
@@ -71,17 +66,15 @@ namespace Meta.XR.TrackedKeyboardSample
         }
 
         /// <summary>
-        /// Initializes the visualizer with the given passthrough layer and trackable.
+        /// Initializes the visualizer with the given trackable.
         /// </summary>
-        /// <param name="passthroughLayer">The passthrough layer to use.</param>
         /// <param name="trackable">The MRUKTrackable to visualize.</param>
         /// <param name="boundaryVisual">The boundary visual implementation.</param>
-        public void Initialize(OVRPassthroughLayer passthroughLayer, MRUKTrackable trackable, BoundaryVisual boundaryVisual)
+        public void Initialize(MRUKTrackable trackable, BoundaryVisual boundaryVisual)
         {
             if (trackable == null)
                 throw new ArgumentNullException(nameof(trackable));
 
-            _passthroughLayer = passthroughLayer;
             _trackable = trackable;
             _boundaryVisual = boundaryVisual;
 
@@ -103,7 +96,7 @@ namespace Meta.XR.TrackedKeyboardSample
 
             _boxCollider.size = new Vector3(box.size.x * _colliderScaleX, box.size.y, box.size.z * _colliderScaleZ);
 
-            _2DVisual?.Initialize(this, _passthroughLayer, _trackable);
+            _2DVisual?.Initialize(this, _trackable);
             _2DVisual?.UpdateVisibility(this, !_isHoverActive && _isBoundaryVisualEnabled);
 
             if (_boxTransform != null)
@@ -115,20 +108,10 @@ namespace Meta.XR.TrackedKeyboardSample
                 );
 
                 _boxTransform.localScale = passthroughScale;
-
-                var meshFilter = _boxTransform.GetComponentInChildren<MeshFilter>();
-                if (meshFilter)
-                {
-                    _passthroughLayer.AddSurfaceGeometry(meshFilter.gameObject, true);
-                }
-                else
-                {
-                    Debug.LogWarning($"BoxTransform '{_boxTransform.name}' has no MeshFilter. Ignoring passthrough layer.");
-                }
             }
             else
             {
-                Debug.LogWarning("BoxTransform is not set; ignoring passthrough layer.");
+                Debug.LogWarning("BoxTransform is not set; ignoring passthrough cutout.");
             }
         }
 

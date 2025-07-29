@@ -1,8 +1,8 @@
 // (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
+using Oculus.Interaction;
 using UnityEngine;
 using UnityEngine.Events;
-using Oculus.Interaction;
 
 namespace Meta.XR.TrackedKeyboardSample
 {
@@ -18,6 +18,8 @@ namespace Meta.XR.TrackedKeyboardSample
         public UnityEvent OnHoverEnd;
         [SerializeField, Range(0.2f, 0.6f), Tooltip("Hand penetration distance for the keyboard collider. The normalized opacity value of the hands and keyboard is calculated relative to this distance for a fade effect. Lower values will result in an abrupt fade")]
         private float _maxDistance = 0.4f;
+        [SerializeField]
+        private Material _punchThroughMaterial;
 
         private const float FadeMultiplier = 5f;
         private const float HandOpacity = 0.8f;
@@ -48,10 +50,6 @@ namespace Meta.XR.TrackedKeyboardSample
         /// Right hand's ray interactor.
         /// </summary>
         public RayInteractor RightRayInteractor { get; set; }
-        /// <summary>
-        /// Pass-through layer for rendering the keyboard.
-        /// </summary>
-        public OVRPassthroughLayer PassthroughOverlay { get; set; }
         /// <summary>
         /// Left hand's material property block editor.
         /// </summary>
@@ -190,18 +188,16 @@ namespace Meta.XR.TrackedKeyboardSample
         }
 
         /// <summary>
-        /// Updates the opacity of the pass-through overlay based on hand proximity.
+        /// Updates the opacity of the passthrough cutout based on hand proximity.
         /// </summary>
         private void UpdatePassthroughAlpha()
         {
-            if (PassthroughOverlay)
-            {
-                float alpha = Mathf.Max(
-                    CalculateAlpha(_handStates[LeftHandIndex].Distance),
-                    CalculateAlpha(_handStates[RightHandIndex].Distance)
-                );
-                PassthroughOverlay.textureOpacity = alpha;
-            }
+            float alpha = Mathf.Max(
+                CalculateAlpha(_handStates[LeftHandIndex].Distance),
+                CalculateAlpha(_handStates[RightHandIndex].Distance)
+            );
+            if (_punchThroughMaterial)
+                _punchThroughMaterial.SetFloat("_Alpha", 1 - alpha);
         }
 
         /// <summary>

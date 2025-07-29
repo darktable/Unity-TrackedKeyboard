@@ -130,6 +130,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _maxDistance: 0.25
+  _punchThroughMaterial: {fileID: 2100000, guid: 7549cdea863fa8d4191afc971cc9339a, type: 2}
 --- !u!114 &-482318814045960506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +252,9 @@ MonoBehaviour:
   - {fileID: 7569888999078480655}
   _vectorProperties: []
   _colorProperties: []
-  _floatProperties: []
+  _floatProperties:
+  - name: InvertedAlpha
+    value: 0
   _updateEveryFrame: 1
 --- !u!1 &8421796271426185061
 GameObject:
